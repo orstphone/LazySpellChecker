@@ -2,9 +2,9 @@
 // Created by deccauvw@github on 2024-09-01.
 //
 
-#ifndef LAZYBLOOMFILTERS_HASHFUNCTIONS_H
-#define LAZYBLOOMFILTERS_HASHFUNCTIONS_H
+
 #pragma once
+#include "LazySpellCheckerHelper.h"
 #include <string>
 #include <vector>
 #include <cmath>
@@ -23,8 +23,8 @@ namespace LazySpellChecker {
 		virtual size_t hash(const std::string &key, size_t tableSize);
 
 
+		//hash functions
+		virtual size_t _MD5(const std::string &key, size_t tableSize);
 	};
-
 } // LazySpellChecker
 
-#endif //LAZYBLOOMFILTERS_HASHFUNCTIONS_H
