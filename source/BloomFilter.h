@@ -13,6 +13,7 @@
 #include <bitset>
 #include <iostream>
 #include <cmath>
+#include <memory>
 
 
 namespace LazySpellChecker {
@@ -22,7 +23,9 @@ namespace LazySpellChecker {
 		explicit BloomFilter(size_t size, size_t num_hashes) :
 		bitArray (size),
 		numHashFunctions(num_hashes)
-		{};
+		{
+			hashFn = std::make_unique<HashFunctions>();
+		};
 
 		~BloomFilter() = default;
 

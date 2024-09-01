@@ -8,7 +8,7 @@ namespace LazySpellChecker
 {
 	namespace Constants
 	{
-		inline const char *const k_defaultDictionaryFilename = "C:\\JetBrains\\STLProgramming\\LazyBloomFilters\\source\\wordlist.txt";
+		inline const char *const k_defaultDictionaryFilename = "wordlist.txt";
 		inline constexpr auto k_defaultDictionarySize = 350000;
 
 	}

@@ -3,6 +3,10 @@ project(LazyBloomFilters)
 
 set(CMAKE_CXX_STANDARD 17)
 
+file(
+  COPY "${CMAKE_SOURCE_DIR}\\source\\wordlist.txt"
+  DESTINATION "${CMAKE_BINARY_DIR}")
+
 add_executable(LazyBloomFilters main.cpp
         source/BloomFilter.cpp
         source/BloomFilter.h

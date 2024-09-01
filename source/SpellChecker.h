@@ -31,8 +31,12 @@ namespace LazySpellChecker {
 			}
 
 			std::string word;
-			while (std::getline(file, word))
+			size_t count = 0;
+			while (std::getline(file, word)){
+				count++;
 				bf->insert(word);
+			}
+			std::cout << count << " words inserted" << std::endl;
 		}
 
 		~SpellChecker() = default;
