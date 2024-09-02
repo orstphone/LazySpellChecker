@@ -1,12 +1,10 @@
-#include <iostream>
 #include "LazySpellCheckerHeader.h"
-
 
 int main() {
 
 	LazySpellChecker::SpellChecker sc(10000, 5);
 
-	std::vector<std::string> testWords = {"hello", "world", "test", "spell", "checker", "kemodora"};
+	std::vector<std::string> testWords = {"hello", "world"};
 
 	for(auto& w : testWords)
 	{

@@ -5,7 +5,6 @@
 #ifndef LAZYBLOOMFILTERS_BLOOMFILTER_H
 #define LAZYBLOOMFILTERS_BLOOMFILTER_H
 #pragma once
-#include "LazySpellCheckerHelper.h"
 #include "HashFunctions.h"
 #include <vector>
 #include <string>

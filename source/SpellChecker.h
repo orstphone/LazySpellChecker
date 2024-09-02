@@ -6,12 +6,12 @@
 #define LAZYBLOOMFILTERS_SPELLCHECKER_H
 #pragma once
 #include "BloomFilter.h"
+#include "LazySpellCheckerHelper.h"
 #include "HashFunctions.h"
 #include <vector>
 #include <string>
 #include <functional>
 #include <fstream>
-
 
 namespace LazySpellChecker {
 

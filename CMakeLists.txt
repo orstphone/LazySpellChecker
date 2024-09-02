@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.27)
-project(LazyBloomFilters)
+project(LazySpellChecker)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -15,4 +15,5 @@ add_executable(LazyBloomFilters main.cpp
         source/HashFunctions.h
         LazySpellCheckerHeader.h
         source/SpellChecker.cpp
-        source/SpellChecker.h)
+        source/SpellChecker.h
+)
