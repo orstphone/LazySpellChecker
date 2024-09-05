@@ -14,14 +14,8 @@ namespace LazySpellChecker
 	{
 		inline const char *const k_defaultDictionaryFilename = "wordlist.txt";
 		inline constexpr auto k_defaultDictionarySize = 338882;
-		inline constexpr auto k_defaultMd5HashBufferNumber = 4;
-		//inline constexpr auto k_defaultMd5HashProcessBlocksBitSize = 512;
-		inline std::array<uint32_t, k_defaultMd5HashBufferNumber> k_Md5StateVariables = {
-				0x67452301,
-				0xedfcba45,
-				0x98cbadfe,
-				0x10325476
-		};
+
+		inline constexpr auto k_desiredFalsePositiveRate = 0.01;
 
 	}
 }

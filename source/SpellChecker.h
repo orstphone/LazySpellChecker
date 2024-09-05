@@ -17,13 +17,27 @@ namespace LazySpellChecker {
 
 	class SpellChecker : BloomFilter{
 	public:
-		explicit SpellChecker(size_t size, size_t numHashes,
-		                      const std::string &dictionaryFilename = Constants::k_defaultDictionaryFilename)
-				: BloomFilter(size, numHashes)
+		explicit SpellChecker()
+				: BloomFilter(0, 0)
 				 {
-			std::cout << "SpellChecker constructor called" << std::endl;
-			bf = std::make_unique<BloomFilter>(Constants::k_defaultDictionarySize, 3);
+			 std::cout << "Lazy SpellChecker" << std::endl;
 
+			const std::string &dictionaryFilename = Constants::k_defaultDictionaryFilename;
+
+			auto p = LazySpellChecker::Constants::k_desiredFalsePositiveRate;
+			auto n = LazySpellChecker::Constants::k_defaultDictionarySize;
+			auto m = (int) ((-n * std::log(p)) / (std::log(2) * std::log(2))); // size of the bit array
+			auto k = (int) (m / n * std::log(2)); // number of hash functions
+
+//			printf("p = %f\n", p);  //nums [100% == 1]
+//			printf("n = %d\n", n); //nums
+//			printf("m = %d\n", m); //bits
+//			printf("k = %d\n", k); //nums
+
+			//printf("calling BF\n");
+			bf = std::make_unique<BloomFilter>(k, m);
+
+			printf("opening file\n");
 			std::ifstream file(dictionaryFilename);
 			if (!file) {
 				std::cerr << "ERR : couldn't open file" << dictionaryFilename << std::endl;
@@ -36,7 +50,7 @@ namespace LazySpellChecker {
 				count++;
 				bf->insert(word);
 			}
-			std::cout << count << " words inserted" << std::endl;
+			std::cout << count << " all words inserted" << std::endl;
 		}
 
 		~SpellChecker() = default;

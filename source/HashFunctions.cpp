@@ -8,51 +8,43 @@
 #include <cstring> //for memcpy>
 
 namespace LazySpellChecker {
-	uint32_t HashFunctions::hash(const std::string &key, uint32_t tableSize) {
-		auto hashValue = _MD5(key, tableSize);
-		hashValue %= tableSize;
-		return hashValue;
-	}
+//	uint32_t HashFunctions::hash(const std::string &key, uint32_t tableSize) {
+//		auto hashValue = _MD5(key, tableSize);
+//		hashValue %= tableSize;
+//		return hashValue;
+//	}
 
-	uint32_t HashFunctions::_MD5(const std::string &key, uint32_t tableSize) {
+	uint32_t HashFunctions::MD5(const std::string &key, uint32_t tableSize) {
 		//convert str to uint8_t array
 		auto keyVector32b = stringToUint32(key);
 
-		processMd5(keyVector32b, _md5_paddingBits(key));
+		//zero padding the keyVector32b to 512 bits
+		auto keyVector512b = _md5_paddingBits(keyVector32b);
+		//process the md5 hash
+		processMd5(keyVector512b);
 
-		return keyVector32b[0];
+		//printf("\tkeyVector512b[0] == %x\n", keyVector512b[0]);
+		return keyVector512b[0];
 	}
 
 
 	//======================================= F G H I FUNCTIONS
-	uint32_t HashFunctions::_md5_processRoundsBlockWise(const uint32_t word1, const uint32_t word2,
-	                                                    std::vector<uint32_t> &md5_buffer) {
-		//take input as initialize MD buffer ie ABCD
-		//e.g. B will be fed in C, vice versa
-		md5_buffer[2] = md5_buffer[1];
-		return 0;
-	}
+
 
 	//this returns padded char-wise 8bit sequence of the string for the md5 hash digestion prep
-	std::vector<uint8_t> HashFunctions::_md5_paddingBits(const std::string &key) {
-		//padding bits
-		//each character of the string is converted to a byte and stored in a vector
-		std::vector<uint8_t> message(key.begin(), key.end());
-
-		//append a single '1' bit followed by seven bits of zeros.
-		uint32_t originalLengthBits = message.size() * 8;
-		message.push_back(0x80);
-
-		//append 0 bits until the length is 64b short of a multiple of 512
+	std::vector<uint32_t> HashFunctions::_md5_paddingBits(std::vector<uint32_t> &message){
+		//printf("bit padding called\n");
+	//append 0 bits until the length is 64b short of a multiple of 512
+	auto originalLengthBits = message.size() * 8;
 		while (message.size() * 8 % 512 != 512 - 64)
 			message.push_back(0x00);
 
 		//append the original length in bits as 64b int. (little endian){
 		for (auto i = 0; i < 8; ++i) {
-			message.push_back(static_cast<uint8_t>(originalLengthBits & 0xFF));
+			message.push_back(static_cast<uint32_t>(originalLengthBits & 0xFF));
 			originalLengthBits >>= 8;
 		}
-
+		//printf("size of message = %d\n", message.size());
 		return message;
 	}
 
@@ -78,26 +70,29 @@ namespace LazySpellChecker {
 	}
 
 	std::vector<uint32_t> HashFunctions::stringToUint32(const std::string &key) {
-		std::vector<uint32_t> result;
-		size_t                length = key.length();
+//		printf("\n\nstringToUint32 called\n");
+//		std::cout<<"key == "<<key<<std::endl;
+		//printf("...key length = %d\n", key.length());
 
-		//pad the `key` to a multiple of 4B if necessary.
-		size_t      paddedLength = (length + 3) & ~3; //round up to nearest mul of 4;
-		std::string padded       = key;
-		padded.resize(paddedLength, '\0'); //pad with null characters
+		std::vector<uint32_t> result;
+		size_t                paddedLength = (key.length() + 3) / 4;
+		result.reserve(paddedLength); //rnd up div. by 4
 
 		//convert groups of 4B into uint32_t
-		for (size_t i = 0; i < paddedLength; i += 4) {
-			uint32_t    word = 0;
-			for (size_t j    = 0; j < 4; ++j) {
-				word |= static_cast<uint32_t>(static_cast<unsigned char>(padded[i + j])) << (j * 8);
+		for (size_t i = 0; i < key.length(); i += 4) {
+			uint32_t    value = 0;
+			for (size_t j    = 0; j < 4 && (i + j < key.length()); ++j) {
+				value |= (static_cast<uint32_t>(key.at(i + j)) << (j * 8));
 			}
-			result.push_back(word);
+			result.push_back(value);
 		}
 		return result;
 	}
 
-	void HashFunctions::processMd5(std::vector<uint32_t> &digest, const std::vector<uint8_t> &message) {
+	void HashFunctions::processMd5(std::vector<uint32_t> &digest) {
+//		std::cout<<"process MD5 start\n";
+//		printf("digest size = %d\n", digest.size());
+
 		//init. variables
 		uint32_t a = digest[0];
 		uint32_t b = digest[1];
@@ -119,10 +114,10 @@ namespace LazySpellChecker {
 		//Convert message into 32b words
 		std::vector<uint32_t> X(16);
 		for (int              i = 0; i < 64; i += 4) {
-			X[i / 4] = static_cast<uint32_t>(message[i]) |
-			           (static_cast<uint32_t>(message[i + 1]) << 8) |
-			           (static_cast<uint32_t>(message[i + 2]) << 16) |
-			           (static_cast<uint32_t>(message[i + 3]) << 24);
+			X[i / 4] = static_cast<uint32_t>(digest[i]) |
+			           (static_cast<uint32_t>(digest[i + 1]) << 8) |
+			           (static_cast<uint32_t>(digest[i + 2]) << 16) |
+			           (static_cast<uint32_t>(digest[i + 3]) << 24);
 		}
 
 		//Phase 1
@@ -168,6 +163,8 @@ namespace LazySpellChecker {
 		digest[2] += c;
 		digest[3] += d;
 
+
+		//printf("process MD5 end\n");
 		//use the processMD5 function to process the message.
 		//value is thrown by reference.
 		//return;
